@@ -114,6 +114,14 @@ export default function CRM() {
     a.click();
   };
 
+  const extractStateFromAddress = (address) => {
+    if (!address) return '';
+    // Look for pattern: City, STATE Zip
+    // State is 2 letters after the last comma
+    const match = address.match(/,\s*([A-Z]{2})\s+\d{5}/);
+    return match ? match[1] : '';
+  };
+
   const importCSV = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -124,11 +132,29 @@ export default function CRM() {
       complete: (results) => {
         if (results.data.length > 0) {
           const newColumns = Object.keys(results.data[0]);
+          const hasAddressColumn = newColumns.includes('address');
+          
+          // Add 'state' column if we have addresses and state column doesn't exist
+          if (hasAddressColumn && !newColumns.includes('state')) {
+            newColumns.push('state');
+          }
+          
           setColumns(newColumns);
-          const newLeads = results.data.map((row, idx) => ({
-            id: Date.now() + idx,
-            ...row
-          }));
+          
+          const newLeads = results.data.map((row, idx) => {
+            const newRow = {
+              id: Date.now() + idx,
+              ...row
+            };
+            
+            // Extract state from address if address column exists
+            if (hasAddressColumn && row.address) {
+              newRow.state = extractStateFromAddress(row.address);
+            }
+            
+            return newRow;
+          });
+          
           setLeads(newLeads);
           saveData(newLeads, newColumns);
         }
