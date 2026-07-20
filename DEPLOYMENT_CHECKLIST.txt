@@ -1,0 +1,178 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║        PARTECHNOLOGY CRM - DEPLOYMENT CHECKLIST (15 minutes)              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+PHASE 1: FIREBASE SETUP (5 minutes)
+═════════════════════════════════════════════════════════════════════════════
+
+□ Go to https://console.firebase.google.com
+□ Click "Create Project"
+□ Name project: partechnology-crm
+□ Click "Create"
+□ Enable Realtime Database
+  □ Click "Realtime Database"
+  □ Click "Create Database"
+  □ Choose location (e.g., us-central1)
+  □ Click "Start in Test Mode"
+  □ Click "Enable"
+□ Copy Firebase Credentials
+  □ Click ⚙️ Settings
+  □ Go to "Project Settings"
+  □ Find and copy:
+     □ API Key: ___________________________
+     □ Auth Domain: ___________________________
+     □ Project ID: ___________________________
+     □ Storage Bucket: ___________________________
+     □ Messaging Sender ID: ___________________________
+     □ App ID: ___________________________
+
+
+PHASE 2: GITHUB SETUP (3 minutes)
+═════════════════════════════════════════════════════════════════════════════
+
+□ Open terminal/command prompt
+□ Navigate to partechnology-crm folder:
+   cd partechnology-crm
+□ Initialize Git repository:
+   git init
+   git add .
+   git commit -m "Initial CRM commit"
+□ Create GitHub repository
+  □ Go to https://github.com/new
+  □ Name: partechnology-crm
+  □ Click "Create repository"
+□ Connect local to GitHub
+  □ Copy the commands from GitHub
+  □ Run in terminal:
+     git branch -M main
+     git remote add origin https://github.com/YOUR_USERNAME/partechnology-crm.git
+     git push -u origin main
+
+
+PHASE 3: VERCEL DEPLOYMENT (7 minutes)
+═════════════════════════════════════════════════════════════════════════════
+
+□ Go to https://vercel.com
+□ Sign in with GitHub
+□ Click "New Project"
+□ Select "partechnology-crm" repository
+□ Click "Import"
+□ Add Environment Variables:
+  □ NEXT_PUBLIC_FIREBASE_API_KEY = [paste from Phase 1]
+  □ NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = [paste from Phase 1]
+  □ NEXT_PUBLIC_FIREBASE_PROJECT_ID = [paste from Phase 1]
+  □ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = [paste from Phase 1]
+  □ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = [paste from Phase 1]
+  □ NEXT_PUBLIC_FIREBASE_APP_ID = [paste from Phase 1]
+□ Click "Deploy"
+□ Wait 2-3 minutes for build to complete
+□ Once complete:
+   □ Copy your live URL: ___________________________
+   □ Open in browser and test
+
+
+TESTING YOUR CRM
+═════════════════════════════════════════════════════════════════════════════
+
+□ Open your live URL
+□ Click "Add Lead"
+□ Fill in a test lead with sample data
+□ Click "Save"
+□ Verify lead appears in table
+□ Test editing (click edit icon)
+□ Test deleting (click trash icon)
+□ Test CSV export (click Export button)
+□ Upload CSV back (click Import button)
+□ Test column management (Settings → Columns)
+
+
+CUSTOMIZATION
+═════════════════════════════════════════════════════════════════════════════
+
+□ Add your default columns
+  □ Edit pages/index.js line 12
+  □ Update column list to your needs
+  □ Push to GitHub: git add . && git commit -m "..." && git push
+  □ Vercel auto-deploys (wait 1-2 minutes)
+
+□ Import existing leads
+  □ Prepare CSV file with matching headers
+  □ Click Import in CRM
+  □ Select your file
+  □ Verify all leads imported
+
+
+SECURITY SETUP (For Production)
+═════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT: Test mode allows anyone to access data!
+
+□ Go to Firebase Console → Realtime Database → Rules
+□ Replace default rules with:
+   {
+     "rules": {
+       "crm": {
+         ".read": "auth.uid != null",
+         ".write": "auth.uid != null"
+       }
+     }
+   }
+□ Click "Publish"
+□ Add Firebase Authentication to CRM (see ARCHITECTURE.md)
+
+
+FINAL CHECKS
+═════════════════════════════════════════════════════════════════════════════
+
+□ CRM accessible at live URL
+□ Can add/edit/delete leads
+□ CSV import/export working
+□ Can add/remove columns
+□ All 6 Firebase env vars set in Vercel
+□ GitHub Actions deploy workflow configured
+□ Tested on mobile phone (responsive design)
+□ Team has access to live URL
+□ Database rules are appropriate for your use case
+
+
+NEXT STEPS AFTER DEPLOYMENT
+═════════════════════════════════════════════════════════════════════════════
+
+□ Share URL with team members
+□ Train team on how to add/edit leads
+□ Set up regular CSV exports for backup
+□ Monitor Vercel dashboard for any issues
+□ Plan customizations:
+   □ Add search functionality
+   □ Add status pipeline (New → Called → Quoted → Won)
+   □ Integrate with Stacy API
+   □ Add user authentication
+   □ Customize colors to brand
+
+
+TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════
+
+Problem: "NEXT_PUBLIC_FIREBASE_PROJECT_ID is undefined"
+Solution: Check all 6 env vars are in Vercel dashboard, then redeploy
+
+Problem: Data not saving
+Solution: Check Firebase Rules allow writes, check browser console for errors
+
+Problem: CSV import says "No data to convert"
+Solution: Make sure CSV has headers in first row
+
+Problem: Columns disappeared
+Solution: Refresh browser (Ctrl+R or Cmd+R), check Firebase Console
+
+Problem: Vercel deploy fails
+Solution: Check Vercel build logs, ensure all env vars are set
+
+
+═════════════════════════════════════════════════════════════════════════════
+ESTIMATED TIME: 15 minutes
+COST: $0 (Vercel free + Firebase free tier)
+STATUS: ✅ Ready to deploy!
+═════════════════════════════════════════════════════════════════════════════
+
+Your Partechnology CRM is production-ready! 🚀
